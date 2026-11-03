@@ -1,60 +1,99 @@
+import '@fontsource-variable/noto-sans-kr'
+import '@fontsource/jua'
 import './style.css'
-import heroImg from './assets/hero.png'
-import javascriptLogo from './assets/javascript.svg'
-import viteLogo from './assets/vite.svg'
-import { setupCounter } from './counter.js'
+import { initNotesBackground } from './notes.js'
+import { drawHeroStaff, openScoreCover } from './score.js'
 
-document.querySelector('#app').innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${javascriptLogo}" class="framework" alt="JavaScript logo"/>
-    <img src="${viteLogo}" class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.js</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-<div class="ticks"></div>
+// 음표 배경
+initNotesBackground(document.getElementById('notes-canvas'), { reducedMotion: prefersReducedMotion })
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src="${viteLogo}" alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-          <img class="button-icon" src="${javascriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+// 첫 화면 오선보
+drawHeroStaff(document.getElementById('hero-staff'))
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+// 헤더: 스크롤 시 배경 표시
+const header = document.querySelector('.site-header')
+const updateHeader = () => header.classList.toggle('is-scrolled', window.scrollY > 20)
+updateHeader()
+window.addEventListener('scroll', updateHeader, { passive: true })
 
-setupCounter(document.querySelector('#counter'))
+// 모바일 메뉴
+const navToggle = document.querySelector('.nav-toggle')
+const nav = document.getElementById('site-nav')
+
+const setNavOpen = (open) => {
+  nav.classList.toggle('is-open', open)
+  navToggle.setAttribute('aria-expanded', String(open))
+  navToggle.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기')
+}
+
+navToggle.addEventListener('click', () => setNavOpen(!nav.classList.contains('is-open')))
+nav.addEventListener('click', (e) => {
+  if (e.target.closest('a')) setNavOpen(false)
+})
+
+// 스크롤에 따라 콘텐츠 등장
+const revealItems = document.querySelectorAll('.reveal')
+
+// 같은 묶음 안의 요소는 순서대로 조금씩 늦게 등장
+document.querySelectorAll('.hero__inner, .grid').forEach((group) => {
+  group.querySelectorAll(':scope > .reveal').forEach((el, i) => {
+    el.style.setProperty('--delay', `${i * 0.12}s`)
+  })
+})
+
+const showItem = (el) => {
+  el.classList.add('is-visible')
+  // 등장이 끝나면 카드의 transition을 hover용으로 전환
+  el.addEventListener('transitionend', () => el.classList.add('is-shown'), { once: true })
+}
+
+const startReveal = () => {
+  if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+    revealItems.forEach((el) => el.classList.add('is-visible', 'is-shown'))
+    return
+  }
+  // 이미 화면 안에 있는 요소는 바로 보여 주고, 나머지만 스크롤을 관찰
+  const inView = (el) => {
+    const rect = el.getBoundingClientRect()
+    return rect.top < window.innerHeight - 40 && rect.bottom > 0
+  }
+  const pending = [...revealItems].filter((el) => {
+    if (!inView(el)) return true
+    showItem(el)
+    return false
+  })
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        showItem(entry.target)
+        observer.unobserve(entry.target)
+      })
+    },
+    { threshold: 0.15, rootMargin: '0px 0px -40px 0px' },
+  )
+  pending.forEach((el) => observer.observe(el))
+}
+
+// 악보 표지가 펼쳐진 뒤 콘텐츠 등장 시작
+openScoreCover(document.getElementById('score-cover'), { reducedMotion: prefersReducedMotion }).then(startReveal)
+
+// 버튼: 클릭 시 물결 효과
+document.querySelectorAll('.btn').forEach((btn) => {
+  btn.addEventListener('pointerdown', (e) => {
+    if (prefersReducedMotion) return
+    const rect = btn.getBoundingClientRect()
+    const ripple = document.createElement('span')
+    ripple.className = 'ripple'
+    ripple.style.left = `${e.clientX - rect.left}px`
+    ripple.style.top = `${e.clientY - rect.top}px`
+    btn.appendChild(ripple)
+    ripple.addEventListener('animationend', () => ripple.remove())
+  })
+})
+
+// 푸터 연도
+document.getElementById('year').textContent = new Date().getFullYear()

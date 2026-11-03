@@ -1,13 +1,188 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko" class="has-cover">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>1103</title>
+    <meta name="description" content="학생들과 함께 성장하는 염창중학교 음악 교사 김도연의 소개 페이지" />
+    <title>김도연 | 음악 교사</title>
   </head>
   <body>
-    <div id="app"></div>
+    <!-- 첫 진입 시 펼쳐지는 악보 표지 -->
+    <div class="score-cover" id="score-cover" aria-hidden="true">
+      <div class="score-cover__front">
+        <div class="score-cover__frame">
+          <p class="score-cover__label">SCORE</p>
+          <p class="score-cover__title">김도연</p>
+          <p class="score-cover__subtitle">무대에서 노래하고, 교실에서 지휘하는 음악 교사</p>
+          <div class="score-cover__staff"><span>𝄞</span></div>
+          <p class="score-cover__hint">악보를 펼치는 중…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 배경: 떠다니는 파스텔 음표 -->
+    <canvas id="notes-canvas" class="bg-canvas" aria-hidden="true"></canvas>
+
+    <header class="site-header">
+      <a href="#top" class="logo" aria-label="맨 위로">
+        <span class="logo__note" aria-hidden="true">♪</span>
+        <span>김도연</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav">
+        <a href="#story">나의 이야기</a>
+        <a href="#projects">프로젝트</a>
+        <a href="#contact">연락처</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <!-- 1. 첫 화면: 악보의 첫 페이지 -->
+      <section class="hero">
+        <div class="hero__stickers" aria-hidden="true">
+          <span class="sticker sticker--1">🎹</span>
+          <span class="sticker sticker--2">🎤</span>
+          <span class="sticker sticker--3">🎻</span>
+          <span class="sticker sticker--4">🎺</span>
+        </div>
+        <div class="container hero__inner">
+          <div class="score-head reveal">
+            <span class="score-head__tempo">♩ = 120 <em>Allegro</em></span>
+            <span class="score-head__credit">염창중학교 음악 교사</span>
+          </div>
+          <p class="eyebrow reveal">Music Teacher · Performer · Researcher</p>
+          <h1 class="hero__title reveal">
+            <span class="hero__name">김도연</span>
+          </h1>
+          <p class="hero__tagline reveal">
+            무대에서 <em>노래</em>하고,<br class="mobile-br" />
+            교실에서 <em>지휘</em>하는 음악 교사
+          </p>
+          <p class="hero__intro reveal">
+            학생들과 함께 성장하는 염창중학교 음악 교사 김도연입니다.
+          </p>
+          <svg id="hero-staff" class="hero-staff reveal" aria-hidden="true"></svg>
+          <div class="hero__actions reveal">
+            <a href="#story" class="btn btn--primary"><span>나의 이야기</span></a>
+            <a href="#projects" class="btn btn--ghost"><span>연구 및 프로젝트</span></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 나의 교육 철학 -->
+      <section id="story" class="section">
+        <div class="container">
+          <header class="section__head reveal">
+            <span class="rehearsal">A</span>
+            <h2 class="section__title">나의 <span class="highlight">교육 철학</span></h2>
+            <div class="staff-line" aria-hidden="true"></div>
+          </header>
+
+          <div class="grid grid--3">
+            <article class="card card--pink reveal">
+              <div class="card__icon" aria-hidden="true">🎤</div>
+              <p class="card__term">espressivo</p>
+              <h3 class="card__title">자기를 표현하는 역량</h3>
+            </article>
+            <article class="card card--mint reveal">
+              <div class="card__icon" aria-hidden="true">🎼</div>
+              <p class="card__term">poco a poco</p>
+              <h3 class="card__title">기초 이론부터 튼튼하게</h3>
+            </article>
+            <article class="card card--sky reveal">
+              <div class="card__icon" aria-hidden="true">📖</div>
+              <p class="card__term">sempre</p>
+              <h3 class="card__title">평생 함께하는 독보 능력</h3>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 수업 및 연구 프로젝트 -->
+      <section id="projects" class="section">
+        <div class="container">
+          <header class="section__head reveal">
+            <span class="rehearsal">B</span>
+            <h2 class="section__title">수업 및 <span class="highlight">연구 프로젝트</span></h2>
+            <div class="staff-line" aria-hidden="true"></div>
+          </header>
+
+          <div class="grid grid--3">
+            <article class="card card--lavender project reveal">
+              <span class="project__index" aria-hidden="true">01</span>
+              <h3 class="card__title">AI·에듀테크를 활용한 음악 수업</h3>
+              <p class="card__text">
+                웹앱을 활용한 창작 수업으로 누구나 작곡가가 됩니다.
+                악기 실력과 상관없이 직접 선율을 만들고 다듬으며, 나만의 음악을 완성하는 기쁨을 경험합니다.
+              </p>
+              <ul class="tags">
+                <li>창작</li>
+                <li>웹앱</li>
+                <li>에듀테크</li>
+              </ul>
+            </article>
+            <article class="card card--butter project reveal">
+              <span class="project__index" aria-hidden="true">02</span>
+              <h3 class="card__title">뮤지컬 동아리 운영</h3>
+              <p class="card__text">
+                하나의 무대를 함께 만들어 가며 서로의 목소리에 귀 기울이는 법을 배웁니다.
+                뮤지컬 동아리 활동을 통해 소통 능력과 협동 능력을 기르고, 음악적 감수성을 키워 갑니다.
+              </p>
+              <ul class="tags">
+                <li>소통</li>
+                <li>협동</li>
+                <li>음악적 감수성</li>
+              </ul>
+            </article>
+            <article class="card card--peach project reveal">
+              <span class="project__index" aria-hidden="true">03</span>
+              <h3 class="card__title">'연주', '감상', '창작'을 아우르는 음악 수업</h3>
+              <p class="card__text">
+                연주하고, 감상하고, 창작하며 익힌 독보 능력은 교실 밖에서도 이어집니다.
+                한 번 배운 악보 읽기가 평생 즐기는 음악 취미의 첫걸음이 되도록 함께합니다.
+              </p>
+              <ul class="tags">
+                <li>연주</li>
+                <li>감상</li>
+                <li>창작</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 연락처 -->
+      <section id="contact" class="section section--contact">
+        <div class="container">
+          <div class="contact reveal">
+            <span class="rehearsal">C</span>
+            <h2 class="contact__title">함께 <span class="highlight">연주</span>해요</h2>
+            <ul class="contact__info">
+              <li>
+                <span class="contact__label">Email</span>
+                <a href="mailto:00000@naver.com" class="contact__value">00000@naver.com</a>
+              </li>
+              <li>
+                <span class="contact__label">Phone</span>
+                <a href="tel:010-0000-0000" class="contact__value">010-0000-0000</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="fine" aria-hidden="true">
+        <span class="fine__text">Fine.</span>
+        <span class="fine__bar"></span>
+      </div>
+      <p>© <span id="year"></span> 김도연. All rights reserved.</p>
+    </footer>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
